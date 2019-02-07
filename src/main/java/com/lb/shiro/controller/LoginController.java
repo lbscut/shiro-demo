@@ -6,14 +6,17 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LoginController {
 
 	@GetMapping("login")
-	String login(String username, String password) {
+	String login(@RequestParam(required=false)String username, @RequestParam(required=false) String password) {
+		if(username == null || password == null) {
+			return "login";
+		}
 		Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(
                 username, password);
@@ -21,16 +24,6 @@ public class LoginController {
 		return "success";
 	}
 
-	@RequestMapping("/myindex")
-	String index() {
-		return "index";
-	}
-
-	@RequestMapping(value = "/myerror")
-	String error() {
-		return "error";
-	}
-	
 	@RequiresRoles("createUser")
 	@RequiresPermissions("create")
 	@GetMapping("/create")
